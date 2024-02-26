@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div class="d1"> d1
+            <div class="d2"> d2
+                <div class="d3"> d3
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var d1 = document.querySelector('.d1');
+        var d2 = document.querySelector('.d2');
+        var d3 = document.querySelector('.d3');
+        
+        d1.addEventListener("click", logD1, true);
+        d2.addEventListener("click", logD2, true);
+        d3.addEventListener("click", logD3, true);
+    
+        function logD1() {
+            console.log("d1");
+        }
+
+        function logD2() {
+            console.log("d2");
+        }
+
+        function logD3() {
+            console.log("d3");
+        }
+    </script>
+</html>

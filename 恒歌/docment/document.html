@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <button id = "mybtn">快点我呀</button>
+        <p id = "demo"></p>
+        <script type="text/javascript">
+            // 用户在click的时候执行HelloWorld函数
+            // 第三个参数代表是在捕获阶段还是冒泡阶段执行（true在捕获阶段，false在冒泡阶段）
+            document.getElementById("mybtn").addEventListener("click", HelloWorld, false);
+            function HelloWorld() {
+                document.getElementById("demo").innerText += "Hello World......\n";
+            }
+        </script>
+    </body>
+</html>

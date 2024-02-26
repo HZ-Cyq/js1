@@ -1,0 +1,22 @@
+<!DOCTYPE html> 
+<html> 
+ <head> 
+ <title>Example HTML Page</title> 
+ </head> 
+ <body> 
+ <!-- 这里是页面内容 --> 
+    <script>
+        let num = 0;
+        outermost:
+        for(let i = 0; i < 10; i ++) {
+            for(let j = 0; j < 10; j++) {
+                if(i == 5 && j == 5) {
+                    continue outermost;
+                }
+                num++;
+            }
+        }
+        console.log(num);
+    </script>
+</body> 
+</html> 

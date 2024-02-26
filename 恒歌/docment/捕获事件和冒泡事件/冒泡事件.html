@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div class="d1"> d1
+            <div class="d2"> d2
+                <div class="d3"> d3
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var d1 = document.querySelector('.d1');
+        var d2 = document.querySelector('.d2');
+        var d3 = document.querySelector('.d3');
+        d1.onclick = function() {
+            console.log('d1');
+        }
+        d2.onclick = function() {
+            console.log('d2');
+        }
+        d3.onclick = function() {
+            console.log('d3');
+        }
+    </script>
+</html>

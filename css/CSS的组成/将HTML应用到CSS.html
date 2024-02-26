@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- 
+    将HTML中应用CSS
+    1、外部样式表（参考让我们开始学习CSS的学习之旅）
+    2、内部样式表(在head里加style元素，影响当前的html)
+    3、内联样式(在元素里加style属性，影响当前元素，看本html的h2元素)
+ -->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>我的CSS测试</title>
+        <style>
+            h1 {
+                color: blue;
+                background-color: yellow;
+                border: 1px solid black;
+            }
+            p {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <h2 style="color: blue; background-color: yellow; border: 1px solid black;">Hello World!</h2>
+        <p>这是我的第一个CSS示例</p>
+    </body>
+</html>

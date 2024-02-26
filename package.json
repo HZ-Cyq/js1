@@ -1,0 +1,11 @@
+{
+  "name": "jsn1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node .\\JavaScript高级程序设计\\05基本引用类型\\eval.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
