@@ -7,5 +7,6 @@
     "test": "node .\\JavaScript高级程序设计\\05基本引用类型\\eval.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "type": "module"
 }

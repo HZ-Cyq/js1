@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+       <button id = "btn">执行func方法</button> 
+    </body>
+    <script> 
+        let btn = document.getElementById("btn");
+        btn.addEventListener("click", func);
+        function func() {
+            let re = setTimeout(() => {
+                console.log(new Date() + ":exe");
+                
+            }, 0);
+            console.log("re : " + re)
+        }
+
+    </script>
+</html>
