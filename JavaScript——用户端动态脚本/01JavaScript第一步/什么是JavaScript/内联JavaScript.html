@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <button onclick="createParagraph()">按钮1</button>
+        <button onclick="createParagraph()">按钮2</button>
+        <button onclick="createParagraph()">按钮3</button>
+        <button onclick="createParagraph()">按钮4</button>
+        <script>
+            function createParagraph() {
+                let paragraph = document.createElement("p");
+                paragraph.textContent = "您点击了按钮";
+                document.body.appendChild(paragraph);
+            }
+        </script>
+    </body>
+</html>

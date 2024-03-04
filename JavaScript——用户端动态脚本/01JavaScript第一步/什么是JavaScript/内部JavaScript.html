@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <p>Player 1: Chris</p>
+        <p>Player 2: Chris</p>
+        <script>
+            let para = document.querySelector("p");
+            para.addEventListener("click", updateName);
+            function updateName() {
+                let name = prompt("Enter a new name", "default name");
+                para.textContent = `Player 1: ${name}`;
+            }
+        </script>
+    </body>
+</html>
