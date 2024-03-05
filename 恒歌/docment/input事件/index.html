@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        // input事件
+        <input placeholder="输入一些文本" name="name" />        
+        <p id="values"></p>
+        <script>
+            let input = document.querySelector("input");
+            let log = document.getElementById("values");
+            input.addEventListener("input", updateValue);
+            function updateValue(e) {
+                log.textContent = e.target.value;
+            }
+        </script>
+    </body>
+</html>
