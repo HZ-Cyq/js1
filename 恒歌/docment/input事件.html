@@ -4,15 +4,20 @@
 
     </head>
     <body>
-        // input事件
+        <!-- input事件 -->
         <input placeholder="输入一些文本" name="name" />        
         <p id="values"></p>
         <script>
             let input = document.querySelector("input");
             let log = document.getElementById("values");
             input.addEventListener("input", updateValue);
+            input.addEventListener("change", change);
             function updateValue(e) {
                 log.textContent = e.target.value;
+                console.log("update事件");
+            }
+            function change() {
+                console.log("change事件");
             }
         </script>
     </body>

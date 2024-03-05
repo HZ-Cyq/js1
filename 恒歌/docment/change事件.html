@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <!-- change事件 -->
+        <label>
+            <select class="ice-cream" name="ice-cream">
+                <option value="">选择一个...</option>
+                <option value="chocolate">巧克力</option>
+                <option value="sardine">沙丁鱼</option>
+                <option value="vanilla">香草</option>
+            </select>
+        </label>
+        <div class="result">
+        </div>
+        <script>
+            let selectElement = document.querySelector(".ice-cream");
+            selectElement.addEventListener("change", (event) => {
+                let result = document.querySelector(".result");
+                result.textContent = `您喜欢 ${event.target.value}`;
+                console.log("change");
+            })
+        </script>
+    </body>
+</html>
