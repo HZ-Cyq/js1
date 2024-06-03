@@ -7,3 +7,4 @@ console.log("hello world1");
 setTimeout(() => {
     console.log("hello world2");
 }, 3000);
+console.log("hello world");
