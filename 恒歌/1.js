@@ -1,9 +1,32 @@
-// let now = new Date();
-// const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-// console.log(now.toLocaleString());
-// const formattedDate = now.toLocaleString('en-US', options).replace(',', '');
-// console.log(formattedDate);
-console.log("hello world1");
-setTimeout(() => {
-    console.log("hello world2");
-}, 3000);
+function convertToCSV(objArray) {
+    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
+
+    // 提取标题行（对象的键）
+    const headers = Object.keys(array[0]);
+    str += headers.join(',') + '\r\n';
+
+    // 提取每个对象的值
+    array.forEach(obj => {
+        let line = '';
+        headers.forEach((header, index) => {
+            if (index > 0) line += ',';
+            line += obj[header];
+        });
+        str += line + '\r\n';
+    });
+
+    return str;
+}
+
+// 示例数据
+const jsonObject = [
+    { "name": "John", "age": 30, "city": "New York" },
+    { "name": "Peter", "age": 25, "city": "London" },
+    { "name": "Mike", "age": 32, "city": "Chicago" }
+];
+
+
+// 转换为CSV
+const csv = convertToCSV(jsonObject);
+console.log(csv);
