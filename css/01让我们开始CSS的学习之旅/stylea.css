@@ -1,0 +1,49 @@
+/* h1标签 */
+h1 {
+    color: red;
+}
+
+/* p和li标签 */
+p, li {
+    color: green;
+}
+/* 改变元素的默认行为 */
+li {
+    list-style-type: none;
+    list-style-type: decimal;
+    list-style-type: decimal-leading-zero;
+}
+/* 类 */
+.special {
+    color: orange;
+    font-weight: bold;
+}
+
+/* 包含选择符，所有在li里的em元素 */
+li em {
+    color: rebeccapurple;
+}
+/* 相邻选择符，紧跟h1且在h1的p标签 */
+h1 + p {
+    font-size: 200%;
+}
+
+/* 根据标签状态确定样式：未访问是粉色的 */
+a:link {
+    color: pink;
+}
+/* 根据标签状态确定样式：访问过的是绿色的 */
+a:visited {
+    color: green;
+}
+/* 根据标签状态确定样式：鼠标在其上面悬浮的时候，没有下划线*/
+a:hover {
+    text-decoration: none;
+}
+
+/* 同时使用选择器和选择符 */
+body h1+p .special {
+    color: yellow;
+    background-color: black;
+    padding: 5px;
+}

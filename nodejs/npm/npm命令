@@ -1,0 +1,2 @@
+npm config get registry #查看当前镜像
+npm config set registry https://registry.npmmirror.org/ #设置当前的镜像
