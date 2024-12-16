@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <script>
+            let callback1 = () => {
+                let now = performance.now();
+                console.log(now);
+                handlerId1 = requestAnimationFrame(callback1);
+                if(now >= 10000) {
+                    cancelAnimationFrame(handlerId1);
+                }
+            };
+
+            let handlerId1 = requestAnimationFrame(callback1);
+            console.log(handlerId1);
+            
+
+            let callback2 = () => {
+                let now = performance.now();
+                console.log(now);
+                handlerId2 = requestAnimationFrame(callback2);
+                if(now >= 10000) {
+                    cancelAnimationFrame(handlerId2);
+                }
+            };
+            let handlerId2 = requestAnimationFrame(callback2);
+            console.log(handlerId2);
+
+        </script>
+    </body>
+</html>
