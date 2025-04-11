@@ -1,0 +1,27 @@
+class Person {
+    name = ""
+    age = ""
+    education = new Education(); 
+}
+
+class Education {
+    primary = ""
+}
+
+const obj = {
+  name: 'John',
+  age: 30,
+  education : {
+    primary : "111",
+  }
+};
+
+// 使用 JSON 方式
+let str = JSON.stringify(obj);
+// const person = Object.assign(new Person(), JSON.parse(str));
+const person = Object.assign(new Person(), obj);
+
+console.log(person instanceof Person);  // true
+console.log(person.education instanceof Education);  // false
+
+console.log(person);  // Person { name: 'John', age: 30 }

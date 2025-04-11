@@ -1,7 +1,7 @@
-console.log(isANumber(1.1));
-console.log(isANumber("1"));
-console.log(isANumber("hel"));
-console.log(isFinite( 10 / 0));
-function isANumber(a) {
-    return !isNaN(parseFloat(a));
-}
+let array = [1, 2, 3];
+console.log(array);
+console.log(...array);
+
+let set = [1 ,2 ,3];
+console.log(set);
+console.log(...set);

@@ -78,9 +78,45 @@ function testSort() {
 
 function testIndexOf() {
   let array = [0, 1, 2, 21, 12];
-  console.log(array.indexOf(99
-    
-  ));
+  console.log(array.indexOf(99));
 }
 
-testIndexOf()
+
+/**
+ * 连接
+ */
+function testConcat() {
+  let array1 = [1, 2, 3];
+  let array2 = [4, 5, 6];
+  let array3 = array1.concat(array2);
+  console.log(array3);
+}
+
+/**
+ * 截取
+ */
+function testSlice() {
+  let array = [1, 2, 3, 4, 5];
+  let slicedArray = array.slice(1, 4);
+  console.log(slicedArray);
+}
+
+/**
+ * 映射
+ */
+function testMap() {
+  let array = [1, 2, 3, 4];
+  let mappedArray = array.map(x => x * 2);
+  console.log(mappedArray);
+}
+
+/**
+ * 过滤
+ */
+function testFilter() {
+  let array = [1, 2, 3, 4, 5];
+  let filteredArray = array.filter(x => x > 2);
+  console.log(filteredArray);
+}
+
+testFill()
