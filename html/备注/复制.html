@@ -1,0 +1,13 @@
+<input type="text" id="myInput" value="这是要复制的内容">
+<button onclick="copyToClipboard()">复制</button>
+
+<script>
+function copyToClipboard() {
+  const text = document.getElementById("myInput").value;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("已复制: " + text);
+  }).catch(err => {
+    alert("复制失败: " + err);
+  });
+}
+</script>

@@ -1,0 +1,1 @@
+1、使用这个命令打包 .\node_modules\.bin\webpack D:\cyq\cyq\js1\javascript\module4\index.js

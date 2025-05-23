@@ -11,7 +11,7 @@ let VSHADER_SOURCE =
 // Fragment shader program
 let FSHADER_SOURCE =
   'void main() {\n' +
-  '  gl_FragColor = vec4(2.0, 2.0, 0.0, 1.0);\n' + // Set the point color
+  '  gl_FragColor = vec4(2.0, 0.0, 0.0, 0.5);\n' + // Set the point color
   '}\n';
 
 function main() {
@@ -26,7 +26,7 @@ function main() {
     return;
   }
   // 设置<canvas>的背景色
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);fan
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   // 绘制一个点(执行顶点着色器，按照mode参数指定的方式绘制图形）
   // 参数

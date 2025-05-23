@@ -1,0 +1,1 @@
+(()=>{var e={189:e=>{e.exports={updateDom:(e,t)=>{window.document.getElementById(e).innerHTML=t}}}},t={};const{updateDom:r}=function r(o){var n=t[o];if(void 0!==n)return n.exports;var p=t[o]={exports:{}};return e[o](p,p.exports,r),p.exports}(189);r("app","index.html")})();
