@@ -1,0 +1,7 @@
+初始化项目:npm init -y
+下载打包好的vue构建工具:npm pack @vue/cli，会生成vue-cli-5.0.8.tgz
+离线环境下，安装vue构建工具:npm install -g vue-cli-5.0.8.tgz，在C:\Users\Administrator\AppData\Roaming\npm\node_modules下会新增很多的包
+卸载：npm uninstall -g @vue/cli
+
+如何找npm的全局安装路径？
+使用命令：npm config get prefix
