@@ -45,7 +45,14 @@ export default {
         [118.78, 32.04], // 南京
         [114.30, 30.59], // 武汉
         [113.26, 23.13]  // 广州
-      ]
+      ];
+      const coordsColor = [
+          "#FFFFFF",
+          "#FFFFFF",
+          "#FF0000",
+          "#FF0000",
+          "#FF0000",
+        ];
 
       // Turf 点集合（不用变）
       const turfPoints = turf.featureCollection(
@@ -63,32 +70,42 @@ export default {
         featureProjection: 'EPSG:4326'
       })
 
+      for(let index = 0; index < voronoiFeatures.length; index++) {
+        let hex = coordsColor[index];
+        if(!hex) {
+          hex = "#cccccc";
+          console.error(`hex is null, index: ${index}`);
+        }
+        const rgba = this.hexToRgba(hex, 0.3);
+        voronoiFeatures[index].setStyle(new Style({
+          stroke: new Stroke({
+            color: "#999",
+            width: 0.5
+          }),
+          fill: new Fill({
+            color: rgba,
+          })
+        }))
+      }
+
+
       // 创建泰森多边形图层
       const voronoiLayer = new VectorLayer({
         source: new VectorSource({
           features: voronoiFeatures
         }),
-        style: new Style({
-          stroke: new Stroke({
-            color: '#333',
-            width: 2
-          }),
-          fill: new Fill({
-            color: 'rgba(0, 150, 255, 0.3)'
-          })
-        })
       })
 
       // 点 Feature，直接用经纬度坐标，不用 fromLonLat 转换了
-      const pointFeatures = coords.map(coord => {
+      const pointFeatures = coords.map((coord, index) => {
         const feature = new Feature({
           geometry: new Point(coord) // 直接用经纬度
         })
         feature.setStyle(new Style({
           image: new CircleStyle({
             radius: 6,
-            fill: new Fill({ color: 'red' }),
-            stroke: new Stroke({ color: 'white', width: 2 })
+            fill: new Fill({ color: coordsColor[index] }),
+            // stroke: new Stroke({ color: 'white', width: 2 })
           })
         }))
         return feature
@@ -116,7 +133,13 @@ export default {
           zoom: 5
         })
       })
-    }
+    },
+    hexToRgba(hex, alpha = 1) {
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
   },
 }
 </script>

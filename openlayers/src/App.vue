@@ -1,16 +1,18 @@
 <template>
   <div id="app">
-    <MapComponent />
+    <ThiessenPolygon />
+    <!-- <Projection /> -->
   </div>
 </template>
 
 <script>
-import MapComponent from './components/MapComponent.vue';
-
+import ThiessenPolygon from './components/thiessenpolygon/thiessenpolygon.vue';
+import Projection from './components/projection/Projection.vue';
 export default {
   name: 'App',
   components: {
-    MapComponent,
+    ThiessenPolygon,
+    Projection,
   },
 };
 </script>

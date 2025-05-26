@@ -22,3 +22,9 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+install了哪些依赖
+// openlayers依赖
+npm install ol
+// 计算泰森多边形依赖
+npm install @turf/turf
