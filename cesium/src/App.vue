@@ -6,8 +6,8 @@
     <!-- <ThiessenPolygon /> -->
      <!-- <RadarEffect /> -->
       <!-- <RadarEffect2 /> -->
-      <RadarEffect3 />
-       <!-- <RadarEffect4 /> -->
+      <!-- <RadarEffect3 /> -->
+       <RadarEffect4 />
   </div>
 </template>
 
