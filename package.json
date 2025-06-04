@@ -10,6 +10,6 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@turf/turf": "^7.2.0"
+    "@turf/turf": "file:temp/turf-turf-7.2.0.tgz"
   }
 }

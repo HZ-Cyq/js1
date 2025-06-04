@@ -28,3 +28,5 @@ install了哪些依赖
 npm install ol
 // 计算泰森多边形依赖
 npm install @turf/turf
+// 投影转换依赖
+npm install proj4

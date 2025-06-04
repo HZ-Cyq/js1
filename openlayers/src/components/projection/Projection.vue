@@ -72,10 +72,10 @@
           ],
           view: new View({
             zoom: 10,
-            center: projected,
+            // center: projected,
             // 如果是4326坐标系，则红点的位置是对的。(下面两行注释打开)
-            // projection: 'EPSG:4326',
-            // center: lonLat,
+            projection: 'EPSG:4326',
+            center: lonLat,
           })
         });
         console.log(map.getView().getProjection());

@@ -1,5 +1,16 @@
 <template>
-  <div id="map" style="width: 100%; height: 100vh;"></div>
+  <div style="display: flex; height: 100vh;">
+    <div style="width: 300px; padding: 10px; background: #f7f7f7;">
+      <h3>扇形参数</h3>
+      <label>经度: <input v-model.number="center[0]" type="number" step="0.0001" /></label><br />
+      <label>纬度: <input v-model.number="center[1]" type="number" step="0.0001" /></label><br />
+      <label>半径 (米): <input v-model.number="radius" type="number" /></label><br />
+      <label>起始角度 (°): <input v-model.number="startAngle" type="number" /></label><br />
+      <label>扇形角度 (°): <input v-model.number="sweepAngle" type="number" /></label><br />
+      <button @click="updateSector">更新扇形</button>
+    </div>
+    <div id="map" style="flex: 1;"></div>
+  </div>
 </template>
 
 <script>
@@ -11,36 +22,39 @@ import XYZ from 'ol/source/XYZ';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Feature } from 'ol';
-import { Polygon, Point } from 'ol/geom';
-import { Style, Stroke, Fill, Circle as CircleStyle } from 'ol/style';
+import { Point, Polygon } from 'ol/geom';
+import { Style, Fill, Stroke, Circle as CircleStyle } from 'ol/style';
 import { fromLonLat } from 'ol/proj';
 
 export default {
-  name: 'LargeScaleSector',
+  data() {
+    return {
+      center: [116.397128, 70], // 北纬 70°，北京经度
+      radius: 5000000, // 5,000 km
+      startAngle: -45,
+      sweepAngle: 100,
+      map: null,
+      vectorSource: null,
+      sectorFeature: null,
+      centerFeature: null,
+    };
+  },
   mounted() {
     this.initMap();
   },
   methods: {
-    /**
-     * 球面距离和方位角计算：
-     * 计算给定中心点 (lon, lat)，距离 radius（单位米），方向 bearing (度) 的目标点经纬度
-     * 基于球面大圆公式
-     */
     getDestinationPoint(center, distanceMeters, bearingDegrees) {
-      const R = 6371008.8; // 地球半径，单位：米
+      const R = 6371008.8; // 平均地球半径，单位：米
       const rad = Math.PI / 180;
-
       const lat1 = center[1] * rad;
       const lon1 = center[0] * rad;
       const bearing = bearingDegrees * rad;
-
       const angularDistance = distanceMeters / R;
 
       const lat2 = Math.asin(
         Math.sin(lat1) * Math.cos(angularDistance) +
-          Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
+        Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
       );
-
       const lon2 =
         lon1 +
         Math.atan2(
@@ -51,56 +65,31 @@ export default {
       return [lon2 / rad, lat2 / rad];
     },
 
-    /**
-     * 生成球面扇形 Polygon
-     * @param {Array} center [lon, lat]
-     * @param {Number} radius 单位米
-     * @param {Number} startAngleDeg 起始角度，0为正北，顺时针方向
-     * @param {Number} sweepAngleDeg 扇形角度
-     * @param {Number} segments 扇形边缘分段数，默认100
-     */
-    generateSphereSectorPolygon(center, radius, startAngleDeg, sweepAngleDeg, segments = 100) {
+    generateSectorPolygon(center, radius, startAngle, sweepAngle, segments = 100) {
       const points = [];
-
-      const angleStep = sweepAngleDeg / segments;
+      const angleStep = sweepAngle / segments;
 
       for (let i = 0; i <= segments; i++) {
-        const angle = startAngleDeg + i * angleStep;
+        const angle = startAngle + i * angleStep;
         const pt = this.getDestinationPoint(center, radius, angle);
         points.push(fromLonLat(pt));
       }
-      // 回到圆心（转投影）
-      points.push(fromLonLat(center));
-
+      points.push(fromLonLat(center)); // 回到圆心，闭合图形
       return new Polygon([points]);
     },
 
     initMap() {
-      const centerLonLat = [116.397128, 60.916527]; // 北京经纬度
-      const radiusMeters = 3000000; // 3000公里
-      const startAngle = -45; // -45度起始角
-      const sweepAngle = 90; // 90度扇形角度
-
-      const sectorPolygon = this.generateSphereSectorPolygon(
-        centerLonLat,
-        radiusMeters,
-        startAngle,
-        sweepAngle,
-        120
-      );
-
-      const sectorFeature = new Feature({ geometry: sectorPolygon });
-      sectorFeature.setStyle(
+      const sectorGeom = this.generateSectorPolygon(this.center, this.radius, this.startAngle, this.sweepAngle);
+      this.sectorFeature = new Feature({ geometry: sectorGeom });
+      this.sectorFeature.setStyle(
         new Style({
           fill: new Fill({ color: 'rgba(255, 100, 50, 0.4)' }),
           stroke: new Stroke({ color: 'red', width: 2 }),
         })
       );
 
-      const centerFeature = new Feature({
-        geometry: new Point(fromLonLat(centerLonLat)),
-      });
-      centerFeature.setStyle(
+      this.centerFeature = new Feature({ geometry: new Point(fromLonLat(this.center)) });
+      this.centerFeature.setStyle(
         new Style({
           image: new CircleStyle({
             radius: 6,
@@ -110,35 +99,35 @@ export default {
         })
       );
 
-      const vectorSource = new VectorSource({
-        features: [sectorFeature, centerFeature],
+      this.vectorSource = new VectorSource({
+        features: [this.sectorFeature, this.centerFeature],
       });
 
-      const vectorLayer = new VectorLayer({ source: vectorSource });
+      const vectorLayer = new VectorLayer({ source: this.vectorSource });
 
-      const osmLayer = new TileLayer({
+      const baseLayer = new TileLayer({
         source: new XYZ({
           url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         }),
       });
 
-      const map = new Map({
+      this.map = new Map({
         target: 'map',
-        layers: [osmLayer, vectorLayer],
+        layers: [baseLayer, vectorLayer],
         view: new View({
           projection: 'EPSG:3857',
-          center: fromLonLat(centerLonLat),
-          zoom: 3, // 大范围显示建议缩小缩放级别
+          center: fromLonLat(this.center),
+          zoom: 2,
         }),
       });
+    },
+
+    updateSector() {
+      const newGeom = this.generateSectorPolygon(this.center, this.radius, this.startAngle, this.sweepAngle);
+      this.sectorFeature.setGeometry(newGeom);
+      this.centerFeature.setGeometry(new Point(fromLonLat(this.center)));
+      this.map.getView().setCenter(fromLonLat(this.center));
     },
   },
 };
 </script>
-
-<style scoped>
-#map {
-  width: 100%;
-  height: 100vh;
-}
-</style>
