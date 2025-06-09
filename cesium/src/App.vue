@@ -7,7 +7,7 @@
      <!-- <RadarEffect /> -->
       <!-- <RadarEffect2 /> -->
       <!-- <RadarEffect3 /> -->
-       <RadarEffect4 />
+       <!-- <RadarEffect4 /> -->
   </div>
 </template>
 
@@ -17,6 +17,7 @@ import HomeView  from './components/HomeView.vue'
 import ThiessenPolygon from './components/thiessenpolygon/ThiessenPolygon.vue';
 import RadarEffect3 from './components/effect/RadarEffect3.vue';
 import RadarEffect4 from './components/effect/RadarEffect4.vue';
+
 export default {
   name: 'App',
   components: {

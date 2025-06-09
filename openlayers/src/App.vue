@@ -2,14 +2,15 @@
   <div id="app">
     <!-- <ThiessenPolygon /> -->
     <!-- <Projection /> -->
-     <!-- <SectorPolygon /> -->
+     <SectorPolygon />
      <!-- <SecotPolygon2 /> -->
      <!-- <SectorPolygon3857 /> -->
     <!-- <SectorPolygon4326 /> -->
     <!-- <SecotorPolygonProj /> -->
      <!-- <SectorPolygonProj2 /> -->
     <!-- <SectorPolygon3 />     -->
-     <GreatCircle> </GreatCircle>
+     <!-- <GreatCircle> </GreatCircle> -->
+      <!-- <DrawPolygon /> -->
 </div>
 </template>
 
@@ -24,7 +25,7 @@ import SecotorPolygonProj from './components/polygon/sectorpolygon/qianwen/Secot
 import SectorPolygonProj2 from './components/polygon/sectorpolygon/qianwen/SectorPolygonProj2.vue';
 import SectorPolygon3 from './components/polygon/sectorpolygon/gpt/SectorPolygon3.vue';
 import GreatCircle from './components/line/GreatCircle.vue';
-
+import DrawPolygon from './components/polygon/sectorpolygon/drawPolygon/DrawPolygon.vue';
 export default {
   name: 'App',
   components: {
@@ -38,6 +39,7 @@ export default {
     SectorPolygonProj2,
     SectorPolygon3,
     GreatCircle,
+    DrawPolygon,
   },
 };
 </script>
