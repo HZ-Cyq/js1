@@ -1,5 +1,18 @@
 <template>
-  <div ref="mapContainer" style="width: 100%; height: 500px;"></div>
+  <div>
+    <div ref="mapContainer" style="width: 100%; height: 500px;"></div>
+    
+    <div style="margin-top:10px; max-width:600px;">
+      <label>半径 (km): {{ radiusKm }}</label>
+      <input type="range" min="500" max="5000" step="100" v-model.number="radiusKm" @input="updateSector" />
+
+      <label>起始角度 (°): {{ startAngle }}</label>
+      <input type="range" min="-180" max="180" step="1" v-model.number="startAngle" @input="updateSector" />
+
+      <label>扫过角度 (°): {{ sweepAngle }}</label>
+      <input type="range" min="0" max="360" step="1" v-model.number="sweepAngle" @input="updateSector" />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -22,6 +35,10 @@ export default {
     return {
       map: null,
       vectorLayer: null,
+      center: [135, 75], // 固定中心点（经度,纬度）
+      radiusKm: 1000,    // 半径，单位千米
+      startAngle: -45,   // 起始角度，度数
+      sweepAngle: 90     // 扫过角度，度数
     };
   },
   mounted() {
@@ -29,7 +46,6 @@ export default {
   },
   methods: {
     initMap() {
-      // 初始化底图和视图
       const rasterLayer = new TileLayer({
         source: new OSM()
       });
@@ -51,27 +67,28 @@ export default {
         target: this.$refs.mapContainer,
         layers: [rasterLayer, this.vectorLayer],
         view: new View({
-          center: fromLonLat([116.397128, 45]), // 更合适的纬度
+          center: fromLonLat(this.center),
           zoom: 4
         })
       });
 
-      // 添加扇形和中心点
-      const center = [135, 75]; // 北京经度，纬度 45
-      this.drawSector(center, 5000000, -45, 90); // 半径 1000km，角度范围 90°
-      this.addCenterPoint(center);
+      this.drawSector(this.center, this.radiusKm, this.startAngle, this.sweepAngle);
+      this.addCenterPoint(this.center);
     },
 
-    drawSector(centerLonLat, radiusMeters, startAngle, sweepAngle) {
-      // 用 turf 构建一个球面扇形边缘
-      const arc = turf.lineArc(centerLonLat, radiusMeters / 1000, startAngle, startAngle + sweepAngle, {
+    drawSector(centerLonLat, radiusKm, startAngle, sweepAngle) {
+      // 清空之前的要素
+      this.vectorLayer.getSource().clear();
+
+      // 扇形边缘
+      const arc = turf.lineArc(centerLonLat, radiusKm, startAngle, startAngle + sweepAngle, {
         steps: 128,
         units: 'kilometers'
       });
 
       const coords = arc.geometry.coordinates;
-      coords.push(centerLonLat); // 添加中心点形成多边形
-      coords.push(coords[0]);    // 闭合多边形
+      coords.push(centerLonLat); // 加入中心点闭合成多边形
+      coords.push(coords[0]);    // 闭合路径
 
       const polygon = turf.polygon([coords]);
       const transformedCoords = polygon.geometry.coordinates[0].map(c => fromLonLat(c));
@@ -81,6 +98,9 @@ export default {
       });
 
       this.vectorLayer.getSource().addFeature(feature);
+
+      // 重新添加中心点
+      this.addCenterPoint(centerLonLat);
     },
 
     addCenterPoint(lonLat) {
@@ -97,11 +117,24 @@ export default {
       }));
 
       this.vectorLayer.getSource().addFeature(pointFeature);
+    },
+
+    updateSector() {
+      this.drawSector(this.center, this.radiusKm, this.startAngle, this.sweepAngle);
     }
   }
 };
 </script>
 
 <style scoped>
-/* 地图容器已在模板内设置 */
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-top: 5px;
+}
 </style>
