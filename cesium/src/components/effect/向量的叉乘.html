@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>向量叉乘演示</title>
+    <style>
+        body {
+            margin: 0;
+            background: #fff;
+            font-family: sans-serif;
+        }
+
+        .label {
+            position: absolute;
+            font-size: 16px;
+            font-weight: bold;
+            pointer-events: none;
+            text-shadow:
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff;
+            user-select: none;
+        }
+
+        #labelX {
+            color: red;
+        }
+
+        #labelY {
+            color: green;
+        }
+
+        #labelZ {
+            color: blue;
+        }
+
+
+        #labelF {
+            color: #0077ff;
+        }
+
+        #labelU {
+            color: #00cc00;
+        }
+
+        #labelR {
+            color: #ff2200;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: sans-serif;
+        }
+
+        input[type=range] {
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="ui">
+        <div>
+            <label>forward x: <input id="fx" type="range" min="-1" max="1" step="0.01" value="0"></label><br>
+            <label>forward y: <input id="fy" type="range" min="-1" max="1" step="0.01" value="1"></label><br>
+            <label>forward z: <input id="fz" type="range" min="-1" max="1" step="0.01" value="0"></label>
+        </div>
+        <div>
+            <label>up x: <input id="ux" type="range" min="-1" max="1" step="0.01" value="0"></label><br>
+            <label>up y: <input id="uy" type="range" min="-1" max="1" step="0.01" value="0"></label><br>
+            <label>up z: <input id="uz" type="range" min="-1" max="1" step="0.01" value="1"></label>
+        </div>
+    </div>
+
+    <canvas id="glcanvas" width="800" height="600"></canvas>
+    <div id="labelF" class="label">F</div>
+    <div id="labelU" class="label">U</div>
+    <div id="labelR" class="label">R</div>
+    <div id="labelX" class="label">X</div>
+    <div id="labelY" class="label">Y</div>
+    <div id="labelZ" class="label">Z</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script>
+        const canvas = document.getElementById('glcanvas');
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 1000);
+
+        camera.position.set(2, 2, 2);
+        camera.lookAt(0, 0, 0);
+
+        const axesHelper = new THREE.AxesHelper(1.5);
+        scene.add(axesHelper);
+
+        const materialF = new THREE.LineBasicMaterial({ color: 0x0077ff });
+        const materialU = new THREE.LineBasicMaterial({ color: 0x00cc00 });
+        const materialR = new THREE.LineBasicMaterial({ color: 0xff2200 });
+
+        let geomF = new THREE.BufferGeometry();
+        let geomU = new THREE.BufferGeometry();
+        let geomR = new THREE.BufferGeometry();
+
+        let lineF = new THREE.Line(geomF, materialF);
+        let lineU = new THREE.Line(geomU, materialU);
+        let lineR = new THREE.Line(geomR, materialR);
+
+        scene.add(lineF);
+        scene.add(lineU);
+        scene.add(lineR);
+
+        const labelF = document.getElementById('labelF');
+        const labelU = document.getElementById('labelU');
+        const labelR = document.getElementById('labelR');
+
+        const labelX = document.getElementById('labelX');
+        const labelY = document.getElementById('labelY');
+        const labelZ = document.getElementById('labelZ');
+
+        const tempV = new THREE.Vector3();
+        const projector = new THREE.Vector3();
+
+        function updateVectors() {
+            const fx = parseFloat(document.getElementById('fx').value);
+            const fy = parseFloat(document.getElementById('fy').value);
+            const fz = parseFloat(document.getElementById('fz').value);
+            const ux = parseFloat(document.getElementById('ux').value);
+            const uy = parseFloat(document.getElementById('uy').value);
+            const uz = parseFloat(document.getElementById('uz').value);
+
+            const f = new THREE.Vector3(fx, fy, fz).normalize();
+            const u = new THREE.Vector3(ux, uy, uz).normalize();
+            const r = new THREE.Vector3().crossVectors(f, u).normalize();
+
+            geomF.setFromPoints([new THREE.Vector3(), f]);
+            geomU.setFromPoints([new THREE.Vector3(), u]);
+            geomR.setFromPoints([new THREE.Vector3(), r]);
+
+            updateLabelPosition(labelF, f);
+            updateLabelPosition(labelU, u);
+            updateLabelPosition(labelR, r);
+
+            updateLabelPosition(labelX, new THREE.Vector3(1.5, 0, 0));
+            updateLabelPosition(labelY, new THREE.Vector3(0, 1.5, 0));
+            updateLabelPosition(labelZ, new THREE.Vector3(0, 0, 1.5));
+
+        }
+
+        function updateLabelPosition(label, vec) {
+            const rect = canvas.getBoundingClientRect();
+            tempV.copy(vec);
+            tempV.project(camera);
+            const x = (tempV.x * 0.5 + 0.5) * rect.width + rect.left;
+            const y = (-tempV.y * 0.5 + 0.5) * rect.height + rect.top;
+            label.style.left = `${x}px`;
+            label.style.top = `${y}px`;
+
+        }
+
+        ['fx', 'fy', 'fz', 'ux', 'uy', 'uz'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateVectors);
+        });
+
+        updateVectors();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+            updateVectors();
+        }
+        animate();
+    </script>
+</body>
+
+</html>
