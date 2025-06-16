@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>跨极点多边形修正版</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+  <style>
+    #map {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 1. 使用EPSG:4326投影避免极点畸变
+      const map = new ol.Map({
+        target: 'map',
+        layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+        view: new ol.View({
+          projection: 'EPSG:4326',
+          center: [0, 85],  // 聚焦北极区域
+          zoom: 2
+        })
+      });
+
+      // 2. 创建矢量图层（确保完整样式）:ml-citation{ref="8" data="citationList"}
+      const vectorLayer = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          stroke: new ol.style.Stroke({ color: 'red', width: 3 }),
+          fill: new ol.style.Fill({ color: 'rgba(255,0,0,0.2)' })  // 必须包含填充
+        })
+      });
+      map.addLayer(vectorLayer);
+
+      // 3. 跨极坐标处理（关键修正）:ml-citation{ref="5,8" data="citationList"}
+      const adjustCoordinates = coords => {
+        const adjusted = [];
+        for (let i = 0; i < coords.length; i++) {
+          const [lon, lat] = coords[i];
+          const prev = adjusted[adjusted.length - 1] || coords[0];
+          
+          // 经度跨越处理（避免横跨地图）
+          let adjustLon = lon;
+          if (prev && Math.abs(lon - prev[0]) > 180) {
+            adjustLon = lon > 0 ? lon - 360 : lon + 360;
+          }
+          adjusted.push([adjustLon, lat]);
+        }
+        return adjusted;
+      };
+
+      // 4. 北极多边形坐标（经度纬度）
+      const rawCoords = [
+        [-150, 60], [-170, 80], [-130, 70], 
+        [-110, 85], [-90, 65], [-60, 89], 
+        [-30, 70], [0, 87], [30, 75],
+        [60, 89], [90, 70], [120, 83],
+        [150, 65], [170, 80], [130, 60],
+        [110, 40], [150, 30], [90, 50],
+        [30, 20], [-30, 50], [-90, 30],
+        [-130, 40], [-150, 60]  // 闭合
+      ];
+      
+      const polygonCoords = adjustCoordinates(rawCoords);
+
+      // 5. 创建并添加要素:ml-citation{ref="6" data="citationList"}
+      const polygon = new ol.geom.Polygon([polygonCoords]);
+      const feature = new ol.Feature(polygon);
+      vectorLayer.getSource().addFeature(feature);
+
+      // 6. 自适应视图范围:ml-citation{ref="6" data="citationList"}
+      map.getView().fit(polygon.getExtent(), {
+        padding: [20, 20, 20, 20],
+        duration: 500
+      });
+    });
+  </script>
+</body>
+</html>
