@@ -5,9 +5,10 @@
     <!-- <HomeView/> -->
     <!-- <ThiessenPolygon /> -->
      <!-- <RadarEffect /> -->
-      <!-- <RadarEffect2 /> -->
-      <!-- <RadarEffect3 /> -->
-       <!-- <RadarEffect4 /> -->
+    <!-- <RadarEffect2 /> -->
+    <!-- <RadarEffect3 /> -->
+    <!-- <RadarEffect4 /> -->
+    <HeatMap />
   </div>
 </template>
 
@@ -17,6 +18,7 @@ import HomeView  from './components/HomeView.vue'
 import ThiessenPolygon from './components/thiessenpolygon/ThiessenPolygon.vue';
 import RadarEffect3 from './components/effect/RadarEffect3.vue';
 import RadarEffect4 from './components/effect/RadarEffect4.vue';
+import HeatMap from './components/heatmap/HeatMap.vue';
 
 export default {
   name: 'App',
@@ -28,6 +30,7 @@ export default {
     RadarEffect3,
     /** 直线扇形 */
     RadarEffect4,
+    HeatMap
   }
 }
 </script>
