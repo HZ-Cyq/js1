@@ -29,3 +29,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 npm install cesium
 // 泰森多边形依赖
 npm install @turf/turf
+// 权重泰森多边形依赖
+npm install d3-delaunay  d3

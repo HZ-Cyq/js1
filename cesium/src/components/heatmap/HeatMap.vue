@@ -5,45 +5,42 @@
 </template>
 
 <script>
+import * as d3 from "d3";
+import { voronoi } from "d3-voronoi";
 
 export default {
-  name: "CesiumWeightedHeatmap",
+  name: "CesiumIDWHeatmap",
   data() {
     return {
       viewer: null,
-      points: [], // 下面mounted生成
     };
   },
   mounted() {
-    this.generatePoints(200);
     this.initCesium();
   },
   methods: {
-    generatePoints(num) {
-      this.points = [];
-      const gridSize = Math.ceil(Math.sqrt(num)); // 方格行列数
-      const step = 2 / (gridSize - 1); // -1到1区间步长
+    initCesium() {
+      this.viewer = new Cesium.Viewer("cesiumContainer", {
+                imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),
+      });
+
+      const gridSize = 40;
+      const lonRange = [-1, 1];
+      const latRange = [-1, 1];
+      const centerLon = (lonRange[0] + lonRange[1]) / 2;
+      const centerLat = (latRange[0] + latRange[1]) / 2;
+      const radius = 0.5;
+
+      const points = [];
       for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-          const lon = -1 + step * i;
-          const lat = -1 + step * j;
-          let weight = Math.random(); // 0~1随机权重，或者这里可以自定义
-          if(weight > 0.5) {
-            weight = 0.99;
-          } else {
-            weight = 0.01;
-          }
-          this.points.push([lon, lat, weight]);
-          if (this.points.length >= num) break;
+          const lon = lonRange[0] + (i + 0.5) * (lonRange[1] - lonRange[0]) / gridSize;
+          const lat = latRange[0] + (j + 0.5) * (latRange[1] - latRange[0]) / gridSize;
+          const distance = Math.sqrt((lon - centerLon) ** 2 + (lat - centerLat) ** 2);
+          const weight = distance < radius ? 0 : 1; // 中心为绿，外圈为红
+          points.push({ lon, lat, weight });
         }
-        if (this.points.length >= num) break;
       }
-    },
-    initCesium() {
-
-      this.viewer = new Cesium.Viewer("cesiumContainer", {
-        imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),
-      });
 
       const canvasSize = 512;
       const canvas = document.createElement("canvas");
@@ -51,36 +48,39 @@ export default {
       canvas.height = canvasSize;
       const ctx = canvas.getContext("2d");
 
-      const lonRange = [-1.2, 1.2]; // 边界稍微留点余量
-      const latRange = [-1.2, 1.2];
-
       const getWeight = (lon, lat) => {
-        let numerator = 0;
-        let denominator = 0;
-        this.points.forEach(([px, py, w]) => {
-          const dist = Math.sqrt((px - lon) ** 2 + (py - lat) ** 2);
-          const safeDist = dist + 0.0001;
-          const weight = 1 / safeDist;
-          numerator += w * weight;
-          denominator += weight;
+        let num = 0;
+        let den = 0;
+        const influenceRadius = 0.3;
+
+        points.forEach((p) => {
+          const d = Math.sqrt((p.lon - lon) ** 2 + (p.lat - lat) ** 2);
+          if (d > influenceRadius) return;
+          const safeD = d + 0.001;
+          num += p.weight / safeD;
+          den += 1 / safeD;
         });
-        return denominator === 0 ? 0 : numerator / denominator;
+
+        if (den === 0) return 0;
+        return num / den;
       };
+
+      const colorScale = d3.scaleLinear()
+        .domain([0, 1])
+        .range(["green", "red"]);
 
       const imageData = ctx.createImageData(canvasSize, canvasSize);
       for (let y = 0; y < canvasSize; y++) {
         for (let x = 0; x < canvasSize; x++) {
-          const lon = lonRange[0] + ((x + 0.5) / canvasSize) * (lonRange[1] - lonRange[0]);
-          const lat = latRange[1] - ((y + 0.5) / canvasSize) * (latRange[1] - latRange[0]);
-          const w = getWeight(lon, lat);
-          const r = Math.round(255 * w);
-          const g = Math.round(255 * (1 - w));
-          const b = 0;
-          const idx = (y * canvasSize + x) * 4;
-          imageData.data[idx] = r;
-          imageData.data[idx + 1] = g;
-          imageData.data[idx + 2] = b;
-          imageData.data[idx + 3] = 180;
+          const lon = lonRange[0] + (x / canvasSize) * (lonRange[1] - lonRange[0]);
+          const lat = latRange[1] - (y / canvasSize) * (latRange[1] - latRange[0]);
+          const value = getWeight(lon, lat);
+          const color = d3.rgb(colorScale(Math.min(Math.max(value, 0), 1)));
+          const index = (y * canvasSize + x) * 4;
+          imageData.data[index] = color.r;
+          imageData.data[index + 1] = color.g;
+          imageData.data[index + 2] = color.b;
+          imageData.data[index + 3] = 255;
         }
       }
       ctx.putImageData(imageData, 0, 0);
@@ -97,9 +97,30 @@ export default {
           coordinates: rectangle,
           material: new Cesium.ImageMaterialProperty({
             image: canvas,
-            transparent: true,
+            transparent: false,
           }),
         },
+      });
+
+      const voronoiGen = voronoi()
+        .x((d) => d.lon)
+        .y((d) => d.lat)
+        .extent([lonRange, latRange]);
+      const polygons = voronoiGen.polygons(points);
+
+      polygons.forEach((poly) => {
+        if (poly.length < 3) return;
+        const positions = poly.map((p) => Cesium.Cartesian3.fromDegrees(p[0], p[1]));
+        positions.push(positions[0]);
+
+        this.viewer.entities.add({
+          polyline: {
+            positions: positions,
+            width: 1.5,
+            material: Cesium.Color.BLACK,
+            clampToGround: true,
+          },
+        });
       });
 
       const boundingSphere = Cesium.BoundingSphere.fromRectangle3D(rectangle);
@@ -120,10 +141,7 @@ export default {
   padding: 0;
   overflow: hidden;
 }
-
-body,
-html,
-#app {
+body, html, #app {
   margin: 0;
   padding: 0;
   height: 100%;
