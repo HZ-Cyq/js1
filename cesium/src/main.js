@@ -11,3 +11,4 @@ new Vue({
 
 const result = chroma.mix('rgb(255,0,0)', 'rgb(0,255,0)', 0.5, 'hsl').rgb();
 console.log(result); // 输出：[255, 255, 0]
+
