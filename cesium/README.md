@@ -31,3 +31,5 @@ npm install cesium
 npm install @turf/turf
 // 权重泰森多边形依赖
 npm install d3-delaunay  d3
+// hsl平滑色
+npm install chroma-js

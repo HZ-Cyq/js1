@@ -25,7 +25,7 @@ export default {
         for (let j = 0; j < rows; j++) {
           const lon = lonRange[0] + (i + 0.5) * (lonRange[1] - lonRange[0]) / cols;
           const lat = latRange[0] + (j + 0.5) * (latRange[1] - latRange[0]) / rows;
-          // 这里给权重示例：左半区权重0，右半区权重1，方便观察渐变
+          // 权重示例：左半区权重0，右半区权重1，方便观察渐变
           const midLon = (lonRange[0] + lonRange[1]) / 2;
           const weight = lon < midLon ? 0 : 1;
           pts.push({ lon, lat, weight });
@@ -35,7 +35,7 @@ export default {
     },
 
     clipPolygonToRect(polygon, rect) {
-      // Sutherland–Hodgman clipping，和之前一样，裁剪多边形到范围rect = [minX, minY, maxX, maxY]
+      // Sutherland–Hodgman clipping，裁剪多边形到范围rect = [minX, minY, maxX, maxY]
       const [minX, minY, maxX, maxY] = rect;
 
       function clipEdge(points, edge) {
@@ -104,7 +104,7 @@ export default {
       return output;
     },
 
-    // 计算点权重插值，做简单的IDW插值（Inverse Distance Weighting）
+    // IDW插值计算权重
     getWeightAt(lon, lat, points) {
       let numerator = 0;
       let denominator = 0;
@@ -129,15 +129,22 @@ export default {
       const ctx = canvas.getContext("2d");
       const imageData = ctx.createImageData(width, height);
 
+      // 颜色比例域分3段，绿-黄-红，中间黄色明显
       const colorScale = d3.scaleLinear()
-        .domain([0, 1])
-        .range(["green", "red"]);
+  .domain([0, 0.15, 0.3, 0.5, 0.7, 0.85, 1])
+  .range([
+    "green",       // 0
+    "#80c000",     // 0.15 淡绿色
+    "yellowgreen", // 0.3 黄绿
+    "yellow",      // 0.5 正黄色（中间峰值）
+    "orange",      // 0.7 橙色
+    "#ff4500",     // 0.85 橙红
+    "red"          // 1
+  ]);
 
       for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-          // 经纬度对应像素
           const lon = lonRange[0] + (x / width) * (lonRange[1] - lonRange[0]);
-          // y从上往下，纬度从大到小，所以下面要反过来
           const lat = latRange[1] - (y / height) * (latRange[1] - latRange[0]);
           const weight = this.getWeightAt(lon, lat, points);
           const c = d3.color(colorScale(weight));
@@ -145,7 +152,7 @@ export default {
           imageData.data[idx] = c.r;
           imageData.data[idx + 1] = c.g;
           imageData.data[idx + 2] = c.b;
-          imageData.data[idx + 3] = 180; // 半透明
+          imageData.data[idx + 3] = 220; // 透明度调大一些
         }
       }
 
@@ -155,7 +162,7 @@ export default {
 
     initCesium() {
       this.viewer = new Cesium.Viewer("cesiumContainer", {
-                imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),
+        imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),
       });
 
       const lonRange = [121, 124];
@@ -165,7 +172,7 @@ export default {
 
       const points = this.generateUniformPoints(lonRange, latRange, rows, cols);
 
-      // 画热力图贴图
+      // 绘制热力图贴图
       const heatmapCanvas = this.createHeatmapCanvas(lonRange, latRange, points);
       const rectangle = Cesium.Rectangle.fromDegrees(lonRange[0], latRange[0], lonRange[1], latRange[1]);
 
@@ -175,7 +182,7 @@ export default {
           material: new Cesium.ImageMaterialProperty({
             image: heatmapCanvas,
             transparent: true,
-            color: new Cesium.Color(1, 1, 1, 0.6),
+            color: new Cesium.Color(1, 1, 1, 0.8), // 热力图透明度稍大
           }),
         },
       });
@@ -184,7 +191,7 @@ export default {
       const delaunay = Delaunay.from(points.map((p) => [p.lon, p.lat]));
       const voronoi = delaunay.voronoi([lonRange[0], latRange[0], lonRange[1], latRange[1]]);
 
-      // 画泰森多边形边界线
+      // 绘制泰森多边形边界线
       for (let i = 0; i < points.length; i++) {
         let cell = voronoi.cellPolygon(i);
         if (!cell) continue;
@@ -198,7 +205,7 @@ export default {
           polyline: {
             positions,
             width: 2,
-            material: Cesium.Color.WHITE.withAlpha(0.1),
+            material: Cesium.Color.WHITE.withAlpha(0.1), // 泰森多边形透明度低一点
             clampToGround: false,
           },
         });
