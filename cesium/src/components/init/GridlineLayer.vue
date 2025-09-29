@@ -91,17 +91,18 @@
               position,
               label: {
                 text: labelText,
-                font: labelFont,
-                fillColor: labelColor,
+                font: "14px sans-serif",  // ⬅ 增大字体
+                fillColor: Cesium.Color.WHITE,
                 style: Cesium.LabelStyle.FILL_AND_OUTLINE,
                 outlineColor: Cesium.Color.BLACK,
-                outlineWidth: 2,
+                outlineWidth: 3,           // ⬅ 更粗轮廓
                 verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
                 horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
                 pixelOffset: new Cesium.Cartesian2(0, -10),
-                scale: 0.7,
+                scale: 1.0,                // ⬅ 增大缩放
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
               },
+
             });
             this.entitiesList.push(label);
           }

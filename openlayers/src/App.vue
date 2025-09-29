@@ -2,15 +2,17 @@
   <div id="app">
     <!-- <ThiessenPolygon /> -->
     <!-- <Projection /> -->
-     <SectorPolygon />
+     <!-- <SectorPolygon /> -->
      <!-- <SecotPolygon2 /> -->
      <!-- <SectorPolygon3857 /> -->
     <!-- <SectorPolygon4326 /> -->
     <!-- <SecotorPolygonProj /> -->
      <!-- <SectorPolygonProj2 /> -->
     <!-- <SectorPolygon3 />     -->
-     <!-- <GreatCircle> </GreatCircle> -->
-      <!-- <DrawPolygon /> -->
+    <!-- <GreatCircle> </GreatCircle> -->
+    <!-- <DrawPolygon /> -->
+    <!-- <HeatMap /> -->
+    <IcomMap />
 </div>
 </template>
 
@@ -26,6 +28,9 @@ import SectorPolygonProj2 from './components/polygon/sectorpolygon/qianwen/Secto
 import SectorPolygon3 from './components/polygon/sectorpolygon/gpt/SectorPolygon3.vue';
 import GreatCircle from './components/line/GreatCircle.vue';
 import DrawPolygon from './components/polygon/sectorpolygon/drawPolygon/DrawPolygon.vue';
+import HeatMap from './components/heatmap/HeatMap.vue';
+import IcomMap from './components/polygon/IcomMap.vue';
+
 export default {
   name: 'App',
   components: {
@@ -40,6 +45,8 @@ export default {
     SectorPolygon3,
     GreatCircle,
     DrawPolygon,
+    HeatMap,
+    IcomMap,
   },
 };
 </script>
