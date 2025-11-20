@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Display 属性示例</title>
+  <style>
+    .box {
+      border: 1px solid #333;
+      padding: 10px;
+      margin: 5px;
+      background-color: lightblue;
+    }
+
+    .block-example {
+      display: block;
+      width: 200px;
+    }
+
+    .inline-example {
+      display: inline;
+      width: 200px; /* 不生效 */
+    }
+
+    .inline-block-example {
+      display: inline-block;
+      width: 200px;
+    }
+
+    .flex-container {
+      display: flex;
+      gap: 10px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .none-example {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>display: block</h2>
+  <div class="box block-example">Block 元素 1</div>
+  <div class="box block-example">Block 元素 2</div>
+
+  <h2>display: inline</h2>
+  <div class="box inline-example">Inline 元素 1</div>
+  <div class="box inline-example">Inline 元素 2</div>
+
+  <h2>display: inline-block</h2>
+  <div class="box inline-block-example">Inline-Block 元素 1</div>
+  <div class="box inline-block-example">Inline-Block 元素 2</div>
+
+  <h2>display: flex</h2>
+  <div class="flex-container">
+    <div class="box">Flex 子项 1</div>
+    <div class="box">Flex 子项 2</div>
+    <div class="box">Flex 子项 3</div>
+  </div>
+
+  <h2>display: grid</h2>
+  <div class="grid-container">
+    <div class="box">Grid 子项 1</div>
+    <div class="box">Grid 子项 2</div>
+    <div class="box">Grid 子项 3</div>
+    <div class="box">Grid 子项 4</div>
+  </div>
+
+  <h2>display: none</h2>
+  <div class="box none-example">这个元素不会显示</div>
+</body>
+</html>
